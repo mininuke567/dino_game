@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import IframeActions from './IframeActions';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 export default function LazyIframe({
   gameIframeUrl,
@@ -11,7 +12,7 @@ export default function LazyIframe({
   description,
   gameImage,
   playGameButtonText,
-  loadingTitle,
+  loadingTitle = 'loading...',
   type = 'iframe',
 }: {
   gameIframeUrl: string;
@@ -61,7 +62,7 @@ export default function LazyIframe({
           <div className="relative group w-full max-w-[480px] cursor-pointer" onClick={handlePlayClick}>
             <div className="w-full aspect-video rounded-2xl overflow-hidden border border-lazy-iframe-glow-1 backdrop-blur-sm">
               {gameImage ? (
-                <img
+                <Image
                   src={gameImage}
                   alt={title}
                   width={480}

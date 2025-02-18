@@ -61,6 +61,11 @@
   "HomeComments": {
     "title": "Commentaires sur le jeu"
   },
+  "GamePage": {
+    "title": "All Games",
+    "description": "All Games",
+    "games":"Games"
+  },
   "CategoryPage": {
     "categories": "Catégories",
     "noCategories": "Aucune catégorie trouvée",

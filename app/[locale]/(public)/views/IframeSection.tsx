@@ -8,10 +8,10 @@ import LazyIframe from './LazyIframe';
 function getYoutubeVideoId(url: string): string {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : '';
+  return match && match[2].length === 11 ? match[2] : '';
 }
 
-export default async function IframeSection({pageName}:{pageName:string|null}) {
+export default async function IframeSection({ pageName }: { pageName: string | null }) {
   const locale = await getLocale();
   const prefix = pageName ? pageName + '.' : '';
   const t = await getTranslations(`${prefix}HomeIframe`);
@@ -26,7 +26,7 @@ export default async function IframeSection({pageName}:{pageName:string|null}) {
     <section className=" text-iframe-foreground flex flex-col items-center justify-center p-4 pt-0 relative mb-6 min-h-[calc(40vh-6rem)] md:min-h-[400px] lg:min-h-[600px]">
       {/* 背景图片处理 */}
       {siteConfig.bgType === 'image' && siteConfig.bgImage && (
-        <div 
+        <div
           className="absolute inset-0 w-full h-full"
           style={{
             backgroundImage: `url(${siteConfig.bgImage})`,
@@ -38,7 +38,7 @@ export default async function IframeSection({pageName}:{pageName:string|null}) {
           <div className="absolute inset-0 bg-iframe-overlay backdrop-blur-sm" />
         </div>
       )}
-      
+
       {/* 视频背景处理 */}
       {siteConfig.bgType === 'video' && siteConfig.bgVideo && (
         <div className="absolute inset-0 w-full h-full">
@@ -54,13 +54,7 @@ export default async function IframeSection({pageName}:{pageName:string|null}) {
             </>
           ) : (
             <>
-              <video
-                className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-              >
+              <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline>
                 <source src={siteConfig.bgVideo} type="video/mp4" />
               </video>
               <div className="absolute inset-0 bg-iframe-overlay backdrop-blur-sm pointer-events-none" />
@@ -71,28 +65,36 @@ export default async function IframeSection({pageName}:{pageName:string|null}) {
 
       {/* iframe 容器 - 调整高度和宽度 */}
       <div className="relative z-10 rounded w-full">
-        {isIframe && <LazyIframe gameIframeUrl={siteConfig.gameIframeUrl} title={t('title')}  gameImage={game_screenshot_path}
-          description={t('description')} playGameButtonText={t('playGame')} loadingTitle={t2('title')}
-          pageName={pageName} />}
+        {isIframe && (
+          <LazyIframe
+            gameIframeUrl={siteConfig.gameIframeUrl}
+            title={t('title')}
+            gameImage={game_screenshot_path}
+            description={t('description')}
+            playGameButtonText={t('playGame')}
+            loadingTitle={'加载中...'}
+            pageName={pageName}
+          />
+        )}
         {siteConfig.gameType === 'download' && siteConfig.gameDownload?.showDownloadButton && (
-          <LazyIframe 
-            gameIframeUrl="#" 
+          <LazyIframe
+            gameIframeUrl="#"
             title={t('title')}
             gameImage={game_screenshot_path}
             description={t('description')}
             playGameButtonText={t('downloadGame')}
             type="download"
             pageName={pageName}
-            loadingTitle={t2('title')}
+            loadingTitle={'加载中...'}
           />
         )}
         {isPopup && (
           <div className="flex justify-center items-center py-8">
-            <PopupWindows pageName={pageName} siteConfig={{...siteConfig}} />
+            <PopupWindows pageName={pageName} siteConfig={{ ...siteConfig }} />
           </div>
         )}
       </div>
-      <Ad/>
+      <Ad />
     </section>
   );
 }

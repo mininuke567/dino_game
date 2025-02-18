@@ -7,7 +7,7 @@ import path from 'path';
 import Link from 'next/link';
 import { getPathnameWithLocale } from '@/lib/i18n/navigation';
 import Image from 'next/image';
-export const dynamic = 'force-static'
+export const dynamic = 'force-static';
 type Props = {
   params: Promise<{ locale: string }>;
 };
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: t('GamePage.description'),
     alternates: {
       languages: alternatesLanguage('/games'),
-    }
+    },
   };
 }
 
@@ -58,9 +58,9 @@ async function getGameName(directory: string, pagePath: string, defaultName: str
 async function getGames(locale: string) {
   const gamesDir = path.join(process.cwd(), 'app/[locale]/(public)/games');
   const entries = fs.readdirSync(gamesDir, { withFileTypes: true });
-  
+
   const games: GameInfo[] = [];
-  
+
   for (const entry of entries) {
     if (entry.isDirectory() && entry.name !== 'assets') {
       const configPath = path.join(gamesDir, entry.name, 'config', 'config.json');
@@ -82,23 +82,23 @@ async function getGames(locale: string) {
       }
     }
   }
-  
+
   // 按创建时间倒序排序
   games.sort((a, b) => {
     const dateA = new Date(a.createdTime).getTime();
     const dateB = new Date(b.createdTime).getTime();
     return dateB - dateA;
   });
-  
+
   return games;
 }
 
 export default async function GamesPage({ params }: Props) {
   const { locale = defaultLocale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("GamePage");
+  const t = await getTranslations('GamePage');
   const games = await getGames(locale);
-  
+
   const getGridCols = (count: number) => {
     if (count <= 4) return 'lg:grid-cols-4';
     if (count <= 6) return 'lg:grid-cols-6';
@@ -119,7 +119,7 @@ export default async function GamesPage({ params }: Props) {
               className="group block bg-card rounded-lg overflow-hidden hover:ring-2 hover:ring-accent transition-all duration-300"
             >
               <div className="aspect-video relative">
-                <img
+                <Image
                   src={game.screenshotUrl}
                   alt={game.name}
                   className="w-full h-full object-cover absolute inset-0"
@@ -127,9 +127,7 @@ export default async function GamesPage({ params }: Props) {
                 />
               </div>
               <div className="p-4">
-                <h2 className="font-semibold text-foreground group-hover:text-accent transition-colors">
-                  {game.name}
-                </h2>
+                <h2 className="font-semibold text-foreground group-hover:text-accent transition-colors">{game.name}</h2>
               </div>
             </Link>
           ))}

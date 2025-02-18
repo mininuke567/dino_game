@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Card, CardBody } from '@nextui-org/card';
-import {Button} from '@nextui-org/button';
+import { Button } from '@nextui-org/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { siteConfig } from '@/lib/config/site';
 import { SiteConfig } from '@/lib/types';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const AdContent = dynamic(() => Promise.resolve(Ad), {
-  ssr: false
+  ssr: false,
 });
 
 export default AdContent;
@@ -18,8 +19,8 @@ function Ad() {
   const { enablePromotion, selectedMaterial } = siteConfig as SiteConfig;
   const [isVisible, setIsVisible] = useState(true);
   const [isSticky, setIsSticky] = useState(true);
-  const [dimensions, setDimensions] = useState(() => 
-    calculateDimensions(selectedMaterial?.size || '', selectedMaterial?.ratio || '')
+  const [dimensions, setDimensions] = useState(() =>
+    calculateDimensions(selectedMaterial?.size || '', selectedMaterial?.ratio || ''),
   );
   const adRef = useRef<HTMLDivElement>(null);
 
@@ -30,11 +31,11 @@ function Ad() {
 
     const handleScroll = () => {
       if (!adRef.current) return;
-      
+
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
-      
+
       if (scrollTop + windowHeight >= documentHeight - 100) {
         setIsSticky(false);
       } else {
@@ -50,7 +51,7 @@ function Ad() {
     };
   }, [selectedMaterial, calculateDimensions]);
 
-  if(!enablePromotion){
+  if (!enablePromotion) {
     return null;
   }
 
@@ -76,18 +77,21 @@ function Ad() {
     return { width, height };
   }
 
-  function calculateDimensions(size: string, ratio: string): { width: number; height: number; scale: number; isMobile: boolean } {
+  function calculateDimensions(
+    size: string,
+    ratio: string,
+  ): { width: number; height: number; scale: number; isMobile: boolean } {
     const sizeObj = parseSize(size);
     const ratioObj = parseRatio(ratio);
     const isMobile = window.innerWidth <= 768;
     const maxWidth = isMobile ? window.innerWidth * 0.5 : Math.min(window.innerWidth * 0.25, 300);
-    
+
     if (!sizeObj && !ratioObj) {
-      return { 
-        width: maxWidth, 
-        height: Math.round(maxWidth * 9/16),
+      return {
+        width: maxWidth,
+        height: Math.round((maxWidth * 9) / 16),
         scale: 1,
-        isMobile
+        isMobile,
       };
     }
 
@@ -97,7 +101,7 @@ function Ad() {
         width: sizeObj.width,
         height: sizeObj.height,
         scale: scale,
-        isMobile
+        isMobile,
       };
     }
 
@@ -107,15 +111,15 @@ function Ad() {
         width: maxWidth,
         height: Math.round(maxWidth * aspectRatio),
         scale: 1,
-        isMobile
+        isMobile,
       };
     }
 
-    return { 
-      width: maxWidth, 
-      height: Math.round(maxWidth * 9/16),
+    return {
+      width: maxWidth,
+      height: Math.round((maxWidth * 9) / 16),
       scale: 1,
-      isMobile
+      isMobile,
     };
   }
 
@@ -129,13 +133,13 @@ function Ad() {
     if (selectedMaterial.type === 'image') {
       return (
         <a href={selectedMaterial?.clickUrl} target="_blank">
-          <img
+          <Image
             src={selectedMaterial.materialUrl}
             alt={selectedMaterial?.title || ''}
             style={{
               width: '100%',
               height: 'auto',
-              aspectRatio: `${dimensions.width} / ${dimensions.height}`
+              aspectRatio: `${dimensions.width} / ${dimensions.height}`,
             }}
             className="object-cover rounded-sm"
           />
@@ -150,7 +154,7 @@ function Ad() {
           <iframe
             style={{
               width: '100%',
-              aspectRatio: `${dimensions.width} / ${dimensions.height}`
+              aspectRatio: `${dimensions.width} / ${dimensions.height}`,
             }}
             src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -168,7 +172,7 @@ function Ad() {
           playsInline
           style={{
             width: '100%',
-            aspectRatio: `${dimensions.width} / ${dimensions.height}`
+            aspectRatio: `${dimensions.width} / ${dimensions.height}`,
           }}
           className="rounded-sm"
         >
@@ -191,9 +195,9 @@ function Ad() {
           exit={{ opacity: 0, x: dimensions.isMobile ? 0 : 100, y: dimensions.isMobile ? 100 : 0 }}
           transition={{ duration: 0.3 }}
           className={`${
-            isSticky 
-              ? dimensions.isMobile 
-                ? 'fixed bottom-0 left-0 right-0' 
+            isSticky
+              ? dimensions.isMobile
+                ? 'fixed bottom-0 left-0 right-0'
                 : 'fixed bottom-4 right-4'
               : dimensions.isMobile
                 ? 'absolute bottom-0 left-0 right-0'
@@ -201,37 +205,28 @@ function Ad() {
           } z-50`}
           style={{
             width: dimensions.isMobile ? '100%' : `${dimensions.width * dimensions.scale}px`,
-            transform: dimensions.isMobile ? 'none' : `scale(${dimensions.scale})`
+            transform: dimensions.isMobile ? 'none' : `scale(${dimensions.scale})`,
           }}
         >
           <Card className={`w-full shadow-lg ${dimensions.isMobile ? 'rounded-none' : 'rounded-sm'}`}>
             <CardBody className="relative p-0 overflow-hidden">
               {renderContent()}
-              
+
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/80 via-background/50 to-transparent">
                 <div className="flex items-center justify-between px-3 py-2">
-                  <a 
-                    href={selectedMaterial?.clickUrl} 
-                    target="_blank" 
-                    className="flex-1 group"
-                  >
+                  <a href={selectedMaterial?.clickUrl} target="_blank" className="flex-1 group">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-foreground/90 group-hover:text-primary transition-colors duration-300 font-medium">
                         {selectedMaterial?.title}
                       </span>
-                      <svg 
-                        className="w-4 h-4 text-foreground/70 group-hover:text-primary transform translate-x-0 group-hover:translate-x-1 transition-all duration-300" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24" 
+                      <svg
+                        className="w-4 h-4 text-foreground/70 group-hover:text-primary transform translate-x-0 group-hover:translate-x-1 transition-all duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M9 5l7 7-7 7" 
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
                   </a>

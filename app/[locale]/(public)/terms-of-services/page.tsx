@@ -5,10 +5,11 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { siteConfig } from '@/lib/config/site';
 import { Metadata } from 'next';
-export const dynamic = 'force-static'
+import Image from 'next/image';
+export const dynamic = 'force-static';
 const components: any = {
   img: ({ src, alt }: { src: string; alt: string }) => {
-    return <img src={src} alt={alt} className="object-cover" />;
+    return <Image src={src} alt={alt} className="object-cover" />;
   },
 };
 
@@ -20,14 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations();
   const { locale } = await params;
   setRequestLocale(locale);
-    // 直接导入 MDX 文件的原始内容
-    let Content;
-    try {
-      Content = (await import(`!!raw-loader!./${locale}.mdx`)).default;
-    } catch (error) {
-      Content = (await import(`!!raw-loader!./en.mdx`)).default;
-    }
-    const { content, data: frontMatter } = matter(Content);
+  // 直接导入 MDX 文件的原始内容
+  let Content;
+  try {
+    Content = (await import(`!!raw-loader!./${locale}.mdx`)).default;
+  } catch (error) {
+    Content = (await import(`!!raw-loader!./en.mdx`)).default;
+  }
+  const { content, data: frontMatter } = matter(Content);
   return {
     title: `${frontMatter.title} | ${siteConfig.name}`,
     description: frontMatter.description,
